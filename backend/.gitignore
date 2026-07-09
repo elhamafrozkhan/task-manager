@@ -1,8 +1,9 @@
-# Node dependencies (backend/node_modules, frontend/node_modules, etc.)
+# Node dependencies
 node_modules/
 
 # Environment files (secrets)
 .env
+config/*.env
 .env.*.local
 
 # Build / output
