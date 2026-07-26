@@ -1,8 +1,16 @@
-<script setup>
-</script>
-
 <template>
-  <div id="app">
-    <h1 class="text-3xl font-bold text-center mt-10">Task Manager</h1>
-  </div>
+    <Navbar></Navbar>
+    <router-view></router-view> 
+  
 </template>
+
+<script>
+
+import Navbar from './components/Navbar.vue';
+
+export default{
+  components:{
+    Navbar
+  }
+}
+</script>
