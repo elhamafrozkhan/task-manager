@@ -1,7 +1,7 @@
 <template>
 
     <div class="p-4">
-        <div class="text-xl font-bold"
+        <div class="text-3xl text-center font-bold mb-4"
             >Dashboard
         </div>
         <p>
@@ -14,9 +14,13 @@
             {{ authStore.user?.name }}
         </p>
         <div class="mb-3">
+
         <button @click="currentFilter = 'all'" 
             type="button" 
             class="border p-2"
+            :class="{
+                'bg-blue-500 text-white': currentFilter === 'all'
+            }"
         > 
             All
 
@@ -25,6 +29,9 @@
         <button @click="currentFilter = 'active'" 
             type="button" 
             class="border p-2"
+            :class="{
+                'bg-blue-500 text-white': currentFilter === 'active'
+            }"
         >
             Active
         </button>
@@ -32,6 +39,9 @@
         <button @click="currentFilter = 'completed'" 
             type="button" 
             class="border p-2"
+            :class="{
+                'bg-blue-500 text-white': currentFilter === 'completed'
+            }"
         >   
             Completed
 
@@ -159,7 +169,7 @@ export default {
             if (this.currentFilter === 'completed') {
                 return this.tasks.filter(task => task.completed)
             }
-            
+
             return this.tasks
             
         }
