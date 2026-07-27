@@ -3,6 +3,12 @@
         <div class="text-3xl items-center font-bold p-4"
             >Task Manager
         </div>
+         <router-link to="/" 
+        >
+            Dashboard
+            
+        </router-link>
+
         <router-link to="/login" v-if="!authStore.user"
         >
             Login
@@ -14,6 +20,12 @@
         >
             Logout
         </button>
+
+        <router-link to="/profile" v-if="authStore.user"
+        >
+            My Profile
+
+        </router-link>
    
 
     </nav>       
