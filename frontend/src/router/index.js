@@ -1,8 +1,9 @@
 import {createRouter, createWebHistory} from 'vue-router';
-import Dashboard from '../components/Dashboard.vue'
-import Login from '../components/Login.vue'
-import { useAuthStore } from '../stores/auth'
-import Register from '../components/Register.vue'
+import Dashboard from '../components/Dashboard.vue';
+import Login from '../components/Login.vue';
+import { useAuthStore } from '../stores/auth';
+import Register from '../components/Register.vue';
+import Profile from '../components/Profile.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -18,7 +19,12 @@ const router = createRouter({
             {
             path: '/register',
             component: Register
+            },
+            {
+            path: '/profile',
+            component: Profile
             }
+            
         ]
 })
 router.beforeEach((to, from) => {
