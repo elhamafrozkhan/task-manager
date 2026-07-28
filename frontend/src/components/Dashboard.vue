@@ -56,22 +56,10 @@
         
         <div v-for="task in filteredTasks" :key="task._id">
 
-            <input 
-                type="checkbox"
-                v-model="task.completed"
-                @change="toggleComplete(task)"  
+            <TaskItem :task="task" 
+                @toggle-complete="toggleComplete" 
+                @delete-task="deleteTask" 
             />
-                {{ task.description }}
-
-                <TaskBadges :task="task" />
-
-            <button @click.prevent="deleteTask(task)"
-                type="button"
-                class="border p-2"
-            >
-                Delete
-
-            </button>
 
         </div>
 
@@ -133,11 +121,12 @@
 import api from '../services/api'
 import { useMessageStore } from '../stores/message'
 import { useAuthStore } from '../stores/auth'
-import TaskBadges from '../components/TaskBadges.vue'
+import TaskItem from '../components/TaskItem.vue'
 
 export default {
+
     components: { 
-        TaskBadges 
+        TaskItem
     },
 
     data() {
