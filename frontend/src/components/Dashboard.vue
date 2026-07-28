@@ -15,39 +15,39 @@
         </p>
         <div class="mb-3">
 
-        <button @click="currentFilter = 'all'" 
-            type="button" 
-            class="border p-2"
-            :class="{
-                'bg-blue-500 text-white': currentFilter === 'all'
-            }"
-        > 
-            All
+            <button @click="currentFilter = 'all'" 
+                type="button" 
+                class="border p-2"
+                :class="{
+                    'bg-blue-500 text-white': currentFilter === 'all'
+                }"
+            > 
+                All
 
-        </button>
+            </button>
 
-        <button @click="currentFilter = 'active'" 
-            type="button" 
-            class="border p-2"
-            :class="{
-                'bg-blue-500 text-white': currentFilter === 'active'
-            }"
-        >
-            Active
-        </button>
+            <button @click="currentFilter = 'active'" 
+                type="button" 
+                class="border p-2"
+                :class="{
+                    'bg-blue-500 text-white': currentFilter === 'active'
+                }"
+            >
+                Active
+            </button>
 
-        <button @click="currentFilter = 'completed'" 
-            type="button" 
-            class="border p-2"
-            :class="{
-                'bg-blue-500 text-white': currentFilter === 'completed'
-            }"
-        >   
-            Completed
+            <button @click="currentFilter = 'completed'" 
+                type="button" 
+                class="border p-2"
+                :class="{
+                    'bg-blue-500 text-white': currentFilter === 'completed'
+                }"
+            >   
+                Completed
 
-        </button>
+            </button>
 
-    </div>
+        </div>
         <input 
             type="text"
             v-model="searchQuery"
@@ -62,54 +62,9 @@
             />
 
         </div>
-
-         <form @submit.prevent="addTask">
-
-            <div class="mb-3">
-
-                <label>
-                   New Task
-                </label>
-
-                <input 
-                    type="text"
-                    v-model="newTaskDescription"
-                    class="border p-2"
-                />
-                <select
-                    v-model="newTaskPriority"
-                    class="border p-2"
-                >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                </select>
-
-                <input 
-                    type="date"
-                    v-model="newTaskDueDate"
-                    class="border p-2"
-                />
-
-                <select
-                    v-model="newTaskCategory"
-                    class="border p-2"
-                >
-                    <option value="work">Work</option>
-                    <option value="personal">Personal</option>
-                    <option value="shopping">Shopping</option>
-                    <option value="learning">Learning</option>
-                </select>
-
-                <button 
-                    type="submit"
-                    class="border p-2"
-                >
-                    Add
-                </button>
-
-            </div>
-         </form>
+        
+        <AddTaskForm @add-task="handleAddTask" />
+      
 
     </div>
              
@@ -122,11 +77,14 @@ import api from '../services/api'
 import { useMessageStore } from '../stores/message'
 import { useAuthStore } from '../stores/auth'
 import TaskItem from '../components/TaskItem.vue'
+import AddTaskForm from '../components/AddTaskForm.vue'
+import { useNotificationStore } from '../stores/notification.js'
 
 export default {
 
     components: { 
-        TaskItem
+        TaskItem,
+        AddTaskForm
     },
 
     data() {
@@ -134,11 +92,7 @@ export default {
             status: '',
             messageStore: null,
             authStore: null,
-            newTaskDescription: '',
-            newTaskPriority: 'medium',
             currentFilter: 'all',
-            newTaskDueDate: '',
-            newTaskCategory: 'personal',
             searchQuery: '',
             tasks: []
         }
@@ -149,27 +103,18 @@ export default {
             const response = await api.get('/health')
             this.status = response.data.status
         },
+
         async getTasks() {
             const response = await api.get('/tasks')
             this.tasks = response.data
         },
-        async addTask() {
-            const taskData = {
-                description: this.newTaskDescription,
-                priority: this.newTaskPriority,
-                category: this.newTaskCategory
-            }
-
-            if (this.newTaskDueDate) {
-                taskData.dueDate = this.newTaskDueDate
-            }
+        async handleAddTask(taskData) {
+            const notificationStore = useNotificationStore()
 
             const response = await api.post('/tasks', taskData)
             this.getTasks()
-            this.newTaskDescription = ''
-            this.newTaskPriority = 'medium'
-            this.newTaskDueDate = ''
-            this.newTaskCategory = 'personal'
+            
+            notificationStore.show('Task created successfully!')
         },
 
         async toggleComplete(task) {
