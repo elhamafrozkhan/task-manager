@@ -20,7 +20,7 @@ const taskSchema = new mongoose.Schema({
     },
     category: {          
         type: String,
-        default: "Personal"
+        default: "personal"
     },
     tags: {             
         type: [String],
