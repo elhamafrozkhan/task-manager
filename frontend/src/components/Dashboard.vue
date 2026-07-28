@@ -48,7 +48,12 @@
         </button>
 
     </div>
-
+        <input 
+            type="text"
+            v-model="searchQuery"
+            class="border p-2" 
+        />
+        
         <div v-for="task in filteredTasks" :key="task._id">
 
             <input 
@@ -57,16 +62,8 @@
                 @change="toggleComplete(task)"  
             />
                 {{ task.description }}
-            <span
-                :class="{
-                    'bg-red-200 text-red-800 border p-2': task.priority === 'high',
-                    'bg-yellow-200 text-yellow-800 border p-2': task.priority === 'medium',
-                    'bg-green-200 text-green-800 border p-2': task.priority === 'low'
-                }"
-            >
-                {{ task.priority }}
 
-            </span>
+                <TaskBadges :task="task" />
 
             <button @click.prevent="deleteTask(task)"
                 type="button"
@@ -99,6 +96,23 @@
                     <option value="medium">Medium</option>
                     <option value="high">High</option>
                 </select>
+
+                <input 
+                    type="date"
+                    v-model="newTaskDueDate"
+                    class="border p-2"
+                />
+
+                <select
+                    v-model="newTaskCategory"
+                    class="border p-2"
+                >
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="learning">Learning</option>
+                </select>
+
                 <button 
                     type="submit"
                     class="border p-2"
@@ -119,8 +133,12 @@
 import api from '../services/api'
 import { useMessageStore } from '../stores/message'
 import { useAuthStore } from '../stores/auth'
+import TaskBadges from '../components/TaskBadges.vue'
 
 export default {
+    components: { 
+        TaskBadges 
+    },
 
     data() {
         return {
@@ -130,6 +148,9 @@ export default {
             newTaskDescription: '',
             newTaskPriority: 'medium',
             currentFilter: 'all',
+            newTaskDueDate: '',
+            newTaskCategory: 'personal',
+            searchQuery: '',
             tasks: []
         }
     },    
@@ -144,14 +165,24 @@ export default {
             this.tasks = response.data
         },
         async addTask() {
-            const response = await api.post('/tasks', { 
+            const taskData = {
                 description: this.newTaskDescription,
-                priority: this.newTaskPriority
-            })
+                priority: this.newTaskPriority,
+                category: this.newTaskCategory
+            }
+
+            if (this.newTaskDueDate) {
+                taskData.dueDate = this.newTaskDueDate
+            }
+
+            const response = await api.post('/tasks', taskData)
             this.getTasks()
             this.newTaskDescription = ''
             this.newTaskPriority = 'medium'
+            this.newTaskDueDate = ''
+            this.newTaskCategory = 'personal'
         },
+
         async toggleComplete(task) {
             await api.patch('/tasks/' + task._id, { completed: task.completed })
             this.getTasks()
@@ -163,14 +194,19 @@ export default {
     },
     computed: {
         filteredTasks() {
+            let result = this.tasks
+
             if (this.currentFilter === 'active') {
-                return this.tasks.filter(task => !task.completed)
+                result = this.tasks.filter(task => !task.completed)
             }
             if (this.currentFilter === 'completed') {
-                return this.tasks.filter(task => task.completed)
+                result = this.tasks.filter(task => task.completed)
+            }
+            if (this.searchQuery) {
+                result = result.filter(task => task.description.toLowerCase().includes(this.searchQuery.toLowerCase()))
             }
 
-            return this.tasks
+            return result
             
         }
     },
