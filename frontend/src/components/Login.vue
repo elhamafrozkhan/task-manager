@@ -66,6 +66,7 @@
 <script>
 import api from '../services/api'
 import { useAuthStore } from '../stores/auth'
+import { useNotificationStore } from '../stores/notification.js'
 
 export default {
     data() {
@@ -77,6 +78,9 @@ export default {
 
     methods: {
         async handleLogin() {
+
+            const notificationStore = useNotificationStore()
+
             try {
                 const response = await api.post('/users/login', {
 
@@ -88,12 +92,17 @@ export default {
                     response.data.token
 
                 )
+                notificationStore.show('Login successful!')
+
                 console.log('Login Successful')
                 console.log(response.data)
 
                 this.$router.push('/')
             }
             catch (error) {
+
+                notificationStore.show('Invalid email or password', 'error')
+
                 console.log('Login Failed')
                 console.log(error)
             }
