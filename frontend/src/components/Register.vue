@@ -56,6 +56,7 @@
 <script>
 import api from '../services/api'
 import { useAuthStore } from '../stores/auth'
+import { useNotificationStore } from '../stores/notification.js'
 
 export default {
     data() {
@@ -68,6 +69,9 @@ export default {
 
     methods: {
         async handleRegister() {
+
+            const notificationStore = useNotificationStore()
+
             try {
                 const response = await api.post('/users', {
                     name: this.name,
@@ -80,12 +84,17 @@ export default {
                     response.data.token
                 )
 
+                notificationStore.show('Registration successful!')
+
                 console.log('Registration Successful')
                 console.log(response.data)
 
                 this.$router.push('/')
             }
             catch (error) {
+
+                notificationStore.show('Registration failed — check your details', 'error')
+
                 console.log('Registration Failed')
                 console.log(error)
             }

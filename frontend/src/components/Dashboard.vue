@@ -15,6 +15,13 @@
         </p>
         <div class="mb-3">
 
+            <p class="mb-3">
+                Total: {{ taskStats.total }}
+                - Completed: {{ taskStats.completed }}
+                - Pending: {{ taskStats.pending }}
+                - Overdue: {{ taskStats.overdue }}
+            </p>
+
             <button @click="currentFilter = 'all'" 
                 type="button" 
                 class="border p-2"
@@ -53,6 +60,11 @@
             v-model="searchQuery"
             class="border p-2" 
         />
+        <select v-model="sortBy" class="border p-2">
+            <option value="none">No Sorting</option>
+            <option value="dueDate">Due Date</option>
+            <option value="priority">Priority</option>
+        </select>
         
         <div v-for="task in filteredTasks" :key="task._id">
 
@@ -94,6 +106,7 @@ export default {
             authStore: null,
             currentFilter: 'all',
             searchQuery: '',
+            sortBy: 'none',
             tasks: []
         }
     },    
@@ -127,6 +140,22 @@ export default {
         },
     },
     computed: {
+
+        taskStats() {
+
+            return {
+
+                total: this.tasks.length,
+                completed: this.tasks.filter(task => task.completed).length,
+                pending: this.tasks.filter(task => !task.completed).length,
+                overdue: this.tasks.filter(task => {
+                    if (!task.dueDate) return false
+                    if (task.completed) return false
+                    return new Date(task.dueDate) < new Date()
+                }).length
+            }
+        },
+
         filteredTasks() {
             let result = this.tasks
 
@@ -138,6 +167,13 @@ export default {
             }
             if (this.searchQuery) {
                 result = result.filter(task => task.description.toLowerCase().includes(this.searchQuery.toLowerCase()))
+            }
+            if (this.sortBy === 'dueDate') {
+                result = [...result].sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+            }
+            if (this.sortBy === 'priority') {
+                const priorityOrder = { low: 1, medium: 2, high: 3 }
+                result = [...result].sort((a, b) => priorityOrder[b.priority] - priorityOrder[a.priority])
             }
 
             return result
