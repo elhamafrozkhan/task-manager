@@ -12,10 +12,38 @@
     </div>
 
     <input
-        v-else
+        v-if="isEditing"
         type="text"
         v-model="editedDescription"
         class="border p-2"
+    />
+
+    <select
+        v-if="isEditing"
+        v-model="editedPriority"
+        class="border p-2"
+    >
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+    </select>
+
+    <select
+        v-if="isEditing"
+        v-model="editedCategory"
+        class="border p-2"
+    >
+        <option value="work">Work</option>
+        <option value="personal">Personal</option>
+        <option value="shopping">Shopping</option>
+        <option value="learning">Learning</option>
+
+    </select>
+
+    <input 
+        v-if="isEditing" 
+        type="date" v-model="editedDueDate" 
+        class="border p-2" 
     />
 
         <TaskBadges :task="task" />
@@ -61,18 +89,33 @@ export default{
     data() {
         return {
             isEditing: false,
-            editedDescription: this.task.description
+            editedDescription: this.task.description,
+            editedPriority: this.task.priority,
+            editedCategory: this.task.category,
+            editedDueDate: this.task.dueDate ?
+                this.task.dueDate.slice(0, 10) : ''
         }
     },
 
     methods: {
         saveEdit() {
-            this.$emit('update-task', { _id: this.task._id, description: this.editedDescription })
+            const updatedData = {   
+                _id: this.task._id, 
+                description: this.editedDescription,
+                priority: this.editedPriority,
+                category: this.editedCategory
+            }
+
+            if (this.editedDueDate) {
+                updatedData.dueDate = this.editedDueDate
+            }
+
+            this.$emit('update-task', updatedData)
             this.isEditing = false
         }
+
+
     }
-
-
 }
 
 
