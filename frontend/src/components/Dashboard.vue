@@ -70,7 +70,8 @@
 
             <TaskItem :task="task" 
                 @toggle-complete="toggleComplete" 
-                @delete-task="deleteTask" 
+                @delete-task="deleteTask"
+                @update-task="updateTask" 
             />
 
         </div>
@@ -132,6 +133,10 @@ export default {
 
         async toggleComplete(task) {
             await api.patch('/tasks/' + task._id, { completed: task.completed })
+            this.getTasks()
+        },
+        async updateTask(task) {
+            await api.patch('/tasks/' + task._id, { description: task.description })
             this.getTasks()
         },
         async deleteTask(task) {
