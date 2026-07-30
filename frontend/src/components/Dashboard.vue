@@ -136,7 +136,17 @@ export default {
             this.getTasks()
         },
         async updateTask(task) {
-            await api.patch('/tasks/' + task._id, { description: task.description })
+            const updates = {
+                description: task.description,
+                priority: task.priority,
+                category: task.category
+            }
+
+            if (task.dueDate) {
+                updates.dueDate = task.dueDate
+            }
+
+            await api.patch('/tasks/' + task._id, updates)
             this.getTasks()
         },
         async deleteTask(task) {
