@@ -42,7 +42,8 @@
 
     <input 
         v-if="isEditing" 
-        type="date" v-model="editedDueDate" 
+        type="date" 
+        v-model="editedDueDate" 
         class="border p-2" 
     />
 

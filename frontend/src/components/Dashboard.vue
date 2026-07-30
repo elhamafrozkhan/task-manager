@@ -60,10 +60,26 @@
             v-model="searchQuery"
             class="border p-2" 
         />
+
         <select v-model="sortBy" class="border p-2">
             <option value="none">No Sorting</option>
             <option value="dueDate">Due Date</option>
             <option value="priority">Priority</option>
+        </select>
+
+        <select v-model="categoryFilter" class="border p-2">
+            <option value="all">All Categories</option>
+            <option value="work">Work</option>
+            <option value="personal">Personal</option>
+            <option value="shopping">Shopping</option>
+            <option value="learning">Learning</option>
+        </select>
+
+        <select v-model="priorityFilter" class="border p-2">
+            <option value="all">All Priorities</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
         </select>
         
         <div v-for="task in filteredTasks" :key="task._id">
@@ -108,6 +124,8 @@ export default {
             currentFilter: 'all',
             searchQuery: '',
             sortBy: 'none',
+            categoryFilter: 'all',
+            priorityFilter: 'all',
             tasks: []
         }
     },    
@@ -182,6 +200,12 @@ export default {
             }
             if (this.searchQuery) {
                 result = result.filter(task => task.description.toLowerCase().includes(this.searchQuery.toLowerCase()))
+            }
+            if (this.categoryFilter !== 'all') {
+                result = result.filter(task => task.category === this.categoryFilter)
+            }
+            if (this.priorityFilter !== 'all') {
+                result = result.filter(task => task.priority === this.priorityFilter)
             }
             if (this.sortBy === 'dueDate') {
                 result = [...result].sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
