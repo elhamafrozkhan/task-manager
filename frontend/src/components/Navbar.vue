@@ -26,6 +26,12 @@
             My Profile
 
         </router-link>
+
+        <router-link to="/shared" v-if="authStore.user"
+        >
+            Shared Tasks
+
+        </router-link>
    
 
     </nav>       
