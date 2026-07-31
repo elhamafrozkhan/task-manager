@@ -87,7 +87,8 @@
             <TaskItem :task="task" 
                 @toggle-complete="toggleComplete" 
                 @delete-task="deleteTask"
-                @update-task="updateTask" 
+                @update-task="updateTask"
+                @task-shared="getTasks" 
             />
 
         </div>

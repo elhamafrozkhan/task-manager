@@ -65,6 +65,32 @@
 
     </button>
 
+    <button v-if="!isSharing" @click="isSharing = true" 
+        type="button" 
+        class="border p-2"
+    >
+        Share
+
+    </button>
+
+    <input 
+        v-if="isSharing" 
+        type="email" 
+        v-model="shareEmail" 
+        class="border p-2" 
+    />
+
+    <button v-if="isSharing" @click="sendShare" 
+        type="button" 
+        class="border p-2"
+    >
+        Send
+
+    </button>
+
+    <span v-if="task.sharedWith.length > 0">
+        Shared with {{ task.sharedWith.length }} people
+    </span>
 
     <button @click.prevent="$emit('delete-task', task)"
         type="button"
@@ -77,11 +103,13 @@
 </template>
 
 <script>
+import api from '../services/api'
+import { useNotificationStore } from '../stores/notification'
 import TaskBadges from './TaskBadges.vue'
 
 export default{
     props: ['task'],
-    emits: ['toggle-complete' , 'delete-task' , 'update-task'],
+    emits: ['toggle-complete' , 'delete-task' , 'update-task', 'task-shared'],
 
     components: { 
         TaskBadges 
@@ -94,7 +122,9 @@ export default{
             editedPriority: this.task.priority,
             editedCategory: this.task.category,
             editedDueDate: this.task.dueDate ?
-                this.task.dueDate.slice(0, 10) : ''
+                this.task.dueDate.slice(0, 10) : '',
+            isSharing: false,
+            shareEmail: ''
         }
     },
 
@@ -113,7 +143,22 @@ export default{
 
             this.$emit('update-task', updatedData)
             this.isEditing = false
-        }
+        },
+        async sendShare() {
+            try {
+                await api.post('/tasks/' + this.task._id + '/share', { email: this.shareEmail })
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Task shared successfully!')
+                this.shareEmail = ''
+                this.isSharing = false
+                this.$emit('task-shared')
+                
+            } catch (error) {
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Failed to share task', 'error')
+            }
+},
+
 
 
     }

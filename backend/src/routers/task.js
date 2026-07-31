@@ -199,10 +199,25 @@ router.patch('/tasks/:id', auth, async(req, res) => {
     }
 
     try{
-        const task = await Task.findOne({ _id: req.params.id, owner: req.user._id });
+        const task = await Task.findOne({ 
+            _id: req.params.id, 
+            $or: [
+                { owner: req.user._id },
+                { sharedWith: req.user._id }
+            ]
+        });
 
         if(!task){
             return res.status(404).send()
+        }
+        const isOwner = task.owner.toString() === req.user._id.toString()
+
+        if (!isOwner) {
+            const onlyChangingCompleted = updates.length === 1 && updates[0] === 'completed'
+
+            if (!onlyChangingCompleted) {
+                return res.status(403).send({ error: 'Shared users can only mark tasks complete' })
+            }
         }
 
         updates.forEach((update) => task[update] = req.body[update]);

@@ -4,6 +4,7 @@ import Login from '../components/Login.vue';
 import { useAuthStore } from '../stores/auth';
 import Register from '../components/Register.vue';
 import Profile from '../components/Profile.vue';
+import SharedTasks from '../components/SharedTasks.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -23,6 +24,10 @@ const router = createRouter({
             {
             path: '/profile',
             component: Profile
+            },
+            {
+            path: '/shared',
+            component: SharedTasks
             }
             
         ]
