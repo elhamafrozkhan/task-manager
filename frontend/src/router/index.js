@@ -35,7 +35,9 @@ const router = createRouter({
 router.beforeEach((to, from) => {
     const authStore = useAuthStore()
 
-    if (to.path === '/' && !authStore.token) {
+    const protectedPaths = ['/', '/profile', '/shared']
+
+    if (protectedPaths.includes(to.path) && !authStore.token) {
         return '/login'
     }
 })

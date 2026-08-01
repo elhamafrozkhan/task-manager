@@ -73,6 +73,14 @@
 
     </button>
 
+    <button v-if="!isUnsharing" @click="isUnsharing = true" 
+        type="button" 
+        class="border p-2"
+    >
+        Unshare
+
+    </button>
+
     <input 
         v-if="isSharing" 
         type="email" 
@@ -88,16 +96,29 @@
 
     </button>
 
+    <input 
+        v-if="isUnsharing" 
+        type="email" 
+        v-model="unshareEmail" 
+        class="border p-2" 
+    />
+
+    <button v-if="isUnsharing" @click="sendUnshare" 
+        type="button" 
+        class="border p-2"
+    >
+        Remove
+    </button>
+
     <span v-if="task.sharedWith.length > 0">
         Shared with {{ task.sharedWith.length }} people
     </span>
 
-    <button @click.prevent="$emit('delete-task', task)"
+    <button @click.prevent="confirmDelete(task)"
         type="button"
         class="border p-2"
     >
         Delete
-
     </button>
 
 </template>
@@ -124,7 +145,9 @@ export default{
             editedDueDate: this.task.dueDate ?
                 this.task.dueDate.slice(0, 10) : '',
             isSharing: false,
-            shareEmail: ''
+            shareEmail: '',
+            isUnsharing: false,
+            unshareEmail: ''
         }
     },
 
@@ -157,9 +180,31 @@ export default{
                 const notificationStore = useNotificationStore()
                 notificationStore.show('Failed to share task', 'error')
             }
-},
+        },
+        async sendUnshare() {
+            try {
+                await api.delete('/tasks/' + this.task._id + '/unshare', {
+                    data: { email: this.unshareEmail }
+                })
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Task unshared successfully!')
+                this.unshareEmail = ''
+                this.isUnsharing = false
+                this.$emit('task-shared')
+            } catch (error) {
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Failed to unshare task', 'error')
+            }
+        },
+        confirmDelete(task) {
+            const confirmed = confirm('Are you sure you want to delete this task?')
 
+            if (!confirmed) {
+                return
+            }
 
+            this.$emit('delete-task', task)
+        }
 
     }
 }

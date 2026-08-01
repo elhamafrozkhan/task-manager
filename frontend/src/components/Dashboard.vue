@@ -58,6 +58,7 @@
         <input 
             type="text"
             v-model="searchQuery"
+            placeholder="Search tasks..."
             class="border p-2" 
         />
 
@@ -178,7 +179,6 @@ export default {
         taskStats() {
 
             return {
-
                 total: this.tasks.length,
                 completed: this.tasks.filter(task => task.completed).length,
                 pending: this.tasks.filter(task => !task.completed).length,

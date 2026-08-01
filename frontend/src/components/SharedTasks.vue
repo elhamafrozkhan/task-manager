@@ -4,7 +4,14 @@
             Shared Tasks
         </div>
 
-        <div v-for="task in tasks" :key="task._id" class="mb-3">
+         <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="Search shared tasks..."
+            class="border p-2 mb-3"
+        />
+
+        <div v-for="task in filteredTasks" :key="task._id" class="mb-3">
 
             <input 
                 type="checkbox"
@@ -29,7 +36,8 @@ import api from '../services/api'
 export default {
     data() {
         return {
-            tasks: []
+            tasks: [],
+            searchQuery: ''
         }
     },
 
@@ -47,6 +55,21 @@ export default {
 
                 
             this.getSharedTasks()
+        }
+    },
+    computed: {
+        filteredTasks() {
+            let result = this.tasks
+
+            if (this.searchQuery) {
+                result = result.filter(task =>
+                    task.description
+                        .toLowerCase()
+                        .includes(this.searchQuery.toLowerCase())
+                )
+            }
+
+            return result
         }
     },
 

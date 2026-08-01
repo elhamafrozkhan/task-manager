@@ -5,6 +5,14 @@
             My Profile
         </div>
 
+        <img
+            v-if="authStore.hasAvatar"
+            :src="'http://localhost:3000/users/' + authStore.user._id + '/avatar?v=' + authStore.avatarVersion"
+            alt="Profile Avatar"
+            class="w-32 h-32 rounded-full object-cover"
+            @error="authStore.hasAvatar = false"
+        />
+
         <p v-if="!isEditingName">
 
             {{ authStore.user?.name }}
@@ -67,6 +75,45 @@
 
         </button>
 
+        <input 
+            type="file" 
+            @change="handleFileSelect" 
+            class="border p-2" 
+        />
+
+        <button @click="uploadAvatar" 
+            type="button" 
+            class="border p-2"
+        >
+            Upload
+
+        </button>
+
+        <button
+            @click="removeAvatar"
+            type="button"
+            class="border p-2"
+        >
+            Remove Avatar
+        </button>
+
+        <button
+            @click="logoutAllDevices"
+            type="button"
+            class="border p-2"
+        >
+            Logout All Devices
+        </button>
+
+        <button
+            @click="deleteAccount"
+            type="button"
+            class="border p-2"
+        >
+            Delete Account
+        </button>
+
+
        
     </div>
 </template>
@@ -84,7 +131,8 @@ export default {
             isEditingPassword: false,
             editedName: '',
             editedEmail: '',
-            newPassword: ''
+            newPassword: '',
+            selectedFile: null    
         }
     },
     methods: {
@@ -105,6 +153,72 @@ export default {
                 notificationStore.show('Failed to update password', 'error')
             }
         },
+        handleFileSelect(event) {
+            this.selectedFile = event.target.files[0]
+        },
+        async uploadAvatar() {
+            try {
+                const formData = new FormData()
+                formData.append('avatar', this.selectedFile)
+
+                await api.post('/users/me/avatar', formData)
+
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Avatar uploaded successfully!')
+                this.authStore.hasAvatar = true
+                this.authStore.avatarVersion = Date.now()
+            } catch (error) {
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Failed to upload avatar', 'error')
+            }
+        },
+        async removeAvatar() {
+            try {
+                await api.delete('/users/me/avatar')
+
+                this.authStore.hasAvatar = false
+
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Avatar removed successfully!')
+            } catch (error) {
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Failed to remove avatar', 'error')
+            }
+        },
+        async logoutAllDevices() {
+            try {
+                await api.post('/users/logoutAll')
+
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Logged out of all devices successfully!')
+
+                this.authStore.logout()
+                this.$router.push('/login')
+            } catch (error) {
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Failed to log out of all devices', 'error')
+            }
+        },
+        async deleteAccount() {
+            const confirmed = confirm('Are you sure?')
+
+            if (!confirmed) {
+                return
+            }
+
+            try {
+                await api.delete('/users/me')
+
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Account deleted successfully!')
+
+                this.authStore.logout()
+                this.$router.push('/login')
+            } catch (error) {
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Failed to delete account', 'error')
+            }
+        }
     },
 
     created(){
