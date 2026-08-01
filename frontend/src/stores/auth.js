@@ -5,7 +5,9 @@ export const useAuthStore = defineStore('auth', {
     state: () => ({
 
         user: JSON.parse(localStorage.getItem('user')),
-        token: localStorage.getItem('token')
+        token: localStorage.getItem('token'),
+        hasAvatar: true,
+        avatarVersion: Date.now()
 
     }),
 

@@ -58,32 +58,42 @@ router.post('/tasks/:id/share', auth, async (req, res) => {
         res.status(500).send(e);
     }
 });
-router.delete('/tasks/:id/unshare/:userId', auth, async (req, res) => {
+router.delete('/tasks/:id/unshare', auth, async (req, res) => {
     try {
-        const { id, userId } = req.params;
-        const task = await Task.findById(id);
+        const task = await Task.findById(req.params.id);
 
         if (!task) {
             return res.status(404).send({ error: 'Task not found' });
         }
-     
+
         if (task.owner.toString() !== req.user._id.toString()) {
             return res.status(403).send({ error: 'Not authorized to unshare this task' });
         }
-      
+
+        const { email } = req.body;
+        if (!email) {
+            return res.status(400).send({ error: 'Email is required' });
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(400).send({ error: 'User not found' });
+        }
+
         const isShared = task.sharedWith.some(
-            (sharedUserId) => sharedUserId.toString() === userId
+            (sharedUserId) => sharedUserId.toString() === user._id.toString()
         );
 
         if (!isShared) {
             return res.status(400).send({ error: 'Task is not shared with this user' });
         }
+
         task.sharedWith = task.sharedWith.filter(
-            (sharedUserId) => sharedUserId.toString() !== userId
+            (sharedUserId) => sharedUserId.toString() !== user._id.toString()
         );
 
         await task.save();
-
         res.send(task);
 
     } catch (e) {

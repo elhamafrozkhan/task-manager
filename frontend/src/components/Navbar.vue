@@ -34,7 +34,15 @@
         </router-link>
    
 
-    </nav>       
+    </nav>
+    
+    <img
+        v-if="authStore.hasAvatar && authStore.user"
+        :src="'http://localhost:3000/users/' + authStore.user._id + '/avatar?v=' + authStore.avatarVersion"
+        alt="Profile Avatar"
+        class="w-32 h-32 rounded-full object-cover"
+        @error="authStore.hasAvatar = false"
+    />
 </template>
 
 
