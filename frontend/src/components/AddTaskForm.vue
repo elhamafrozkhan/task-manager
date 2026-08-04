@@ -37,6 +37,13 @@
                 <option value="learning">Learning</option>
             </select>
 
+            <input 
+                type="text" 
+                v-model="newTaskTags" 
+                placeholder="tags, comma, separated" 
+                class="border p-2" 
+            />
+            
             <button 
                 type="submit"
                 class="border p-2"
@@ -60,7 +67,8 @@ export default{
             newTaskDescription: '',
             newTaskPriority: 'medium',
             newTaskDueDate: '',
-            newTaskCategory: 'personal'
+            newTaskCategory: 'personal',
+            newTaskTags: ''
         }
     },
     methods: {
@@ -76,14 +84,24 @@ export default{
                 taskData.dueDate = this.newTaskDueDate
             }
 
+            const tags = this.newTaskTags 
+                .split(',') 
+                .map(tag => tag.trim()) 
+                .filter(tag => tag)
+
+            if (tags.length > 0) { 
+                taskData.tags = tags 
+            }
+
             this.$emit('add-task', taskData)
 
             this.newTaskDescription = ''
             this.newTaskPriority = 'medium'
             this.newTaskDueDate = ''
             this.newTaskCategory = 'personal'
+            this.newTaskTags = ''
         }
-}
+    }
 
 }
 

@@ -18,13 +18,19 @@
                 v-model="task.completed"
                 @change="toggleComplete(task)"  
             />
-            <p>
+            <p class="mb-2">
                 {{ task.description }}
+
             </p>
 
-            <p>
+            <p class="mb-2">
                 Shared by:
                 {{ task.owner?.name || task.owner?.email  }}
+            </p>
+
+             <p class="mb-2">
+                <TaskBadges :task="task" />
+
             </p>
         </div>
     </div>
@@ -32,8 +38,16 @@
 
 <script>
 import api from '../services/api'
+import TaskBadges from './TaskBadges.vue'
+import { useNotificationStore } from '../stores/notification.js'
+
 
 export default {
+
+    components: {
+        TaskBadges
+    },
+
     data() {
         return {
             tasks: [],
@@ -43,18 +57,26 @@ export default {
 
     methods: {
         async getSharedTasks() {
-            const response = await api.get('/tasks/shared')
-            this.tasks = response.data
+            try{
+                const response = await api.get('/tasks/shared')
+                this.tasks = response.data
+
+            }catch (error) {
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Failed to load shared tasks', 'error')
+            }
         },
 
         async toggleComplete(task) {
-            await api.patch('/tasks/' + task._id, {
-                completed: task.completed                
-            })
-            
-
-                
-            this.getSharedTasks()
+            try{
+                await api.patch('/tasks/' + task._id, {
+                    completed: task.completed                
+                })                
+                this.getSharedTasks()
+            }catch (error) {
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Failed to update task', 'error')
+            }
         }
     },
     computed: {

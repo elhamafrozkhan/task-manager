@@ -5,6 +5,7 @@ import { useAuthStore } from '../stores/auth';
 import Register from '../components/Register.vue';
 import Profile from '../components/Profile.vue';
 import SharedTasks from '../components/SharedTasks.vue';
+import NotFound from '../components/NotFound.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -28,6 +29,10 @@ const router = createRouter({
             {
             path: '/shared',
             component: SharedTasks
+            },
+            {
+            path: '/:pathMatch(.*)*',
+            component: NotFound
             }
             
         ]

@@ -29,6 +29,16 @@
         {{ task.category }} 
 
     </span>
+
+        <span v-if="task.tags && task.tags.length > 0">
+        <span
+            v-for="tag in task.tags"
+            :key="tag"
+            class="bg-gray-200 text-gray-800 border p-2"
+        >
+            {{ tag }}
+        </span>
+    </span>
 </template>
 
 <script>

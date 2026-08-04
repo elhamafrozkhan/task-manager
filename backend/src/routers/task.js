@@ -132,6 +132,10 @@ router.get('/tasks', auth, async(req, res) => {
                 limit: parseInt(req.query.limit),
                 skip: parseInt(req.query.skip),
                 sort
+            },
+            populate: {
+                path: 'sharedWith',
+                select: 'name email'
             }
         }).execPopulate();
         res.send(req.user.tasks);

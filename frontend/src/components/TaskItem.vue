@@ -47,6 +47,14 @@
         class="border p-2" 
     />
 
+    <input 
+        v-if="isEditing" 
+        type="text" 
+        v-model="editedTags" 
+        placeholder="tags, comma, separated"
+        class="border p-2" 
+    />
+
         <TaskBadges :task="task" />
 
     <button v-if="!isEditing" @click="isEditing = true"
@@ -63,6 +71,14 @@
     >
         Save
 
+    </button>
+
+    <button v-if="isEditing"
+        @click="cancelEdit"
+        type="button"
+        class="border p-2"
+    >
+        Cancel
     </button>
 
     <button v-if="!isSharing" @click="isSharing = true" 
@@ -103,7 +119,7 @@
         class="border p-2" 
     />
 
-    <button v-if="isUnsharing" @click="sendUnshare" 
+    <button v-if="isUnsharing" @click="sendUnshare()"  
         type="button" 
         class="border p-2"
     >
@@ -111,7 +127,17 @@
     </button>
 
     <span v-if="task.sharedWith.length > 0">
-        Shared with {{ task.sharedWith.length }} people
+        Shared with
+        <span v-for="person in task.sharedWith" :key="person._id">
+            {{ person.name }},
+
+                <button @click.prevent="sendUnshare(person.email)"
+                    type="button"
+                    class="border p-2"
+                >
+                    Remove
+                </button>
+        </span>
     </span>
 
     <button @click.prevent="confirmDelete(task)"
@@ -144,6 +170,7 @@ export default{
             editedCategory: this.task.category,
             editedDueDate: this.task.dueDate ?
                 this.task.dueDate.slice(0, 10) : '',
+            editedTags: this.task.tags ? this.task.tags.join(', ') : '',
             isSharing: false,
             shareEmail: '',
             isUnsharing: false,
@@ -164,8 +191,28 @@ export default{
                 updatedData.dueDate = this.editedDueDate
             }
 
+            const tags = this.editedTags
+                .split(',')
+                .map(tag => tag.trim())
+                .filter(tag => tag)
+
+            if (tags.length > 0) {
+                updatedData.tags = tags
+            }
+
             this.$emit('update-task', updatedData)
             this.isEditing = false
+        },
+        cancelEdit() {
+            this.isEditing = false
+
+            this.editedDescription = this.task.description
+            this.editedPriority = this.task.priority
+            this.editedCategory = this.task.category
+            this.editedDueDate = this.task.dueDate ?
+                this.task.dueDate.slice(0, 10) : ''
+            this.editedTags = this.task.tags ?
+                this.task.tags.join(', ') : ''
         },
         async sendShare() {
             try {
@@ -181,10 +228,10 @@ export default{
                 notificationStore.show('Failed to share task', 'error')
             }
         },
-        async sendUnshare() {
+        async sendUnshare(email = this.unshareEmail) {
             try {
                 await api.delete('/tasks/' + this.task._id + '/unshare', {
-                    data: { email: this.unshareEmail }
+                    data: { email }
                 })
                 const notificationStore = useNotificationStore()
                 notificationStore.show('Task unshared successfully!')
