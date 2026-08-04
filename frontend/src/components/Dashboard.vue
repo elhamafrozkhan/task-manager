@@ -4,12 +4,6 @@
         <div class="text-3xl text-center font-bold mb-4"
             >Dashboard
         </div>
-        <p>
-            {{ messageStore.text }}
-        </p>
-        <p>
-            {{ status }}
-        </p>
         <p>            
             {{ authStore.user?.name }}
         </p>
@@ -94,8 +88,7 @@
 
         </div>
         
-        <AddTaskForm @add-task="handleAddTask" />
-      
+        <AddTaskForm @add-task="handleAddTask" />      
 
     </div>
              
@@ -105,7 +98,6 @@
 <script>
 
 import api from '../services/api'
-import { useMessageStore } from '../stores/message'
 import { useAuthStore } from '../stores/auth'
 import TaskItem from '../components/TaskItem.vue'
 import AddTaskForm from '../components/AddTaskForm.vue'
@@ -120,8 +112,6 @@ export default {
 
     data() {
         return {
-            status: '',
-            messageStore: null,
             authStore: null,
             currentFilter: 'all',
             searchQuery: '',
@@ -133,46 +123,78 @@ export default {
     },    
 
     methods: {
-        async getHealth() {
-            const response = await api.get('/health')
-            this.status = response.data.status
-        },
-
         async getTasks() {
-            const response = await api.get('/tasks')
-            this.tasks = response.data
+            try {
+                const response = await api.get('/tasks')
+                this.tasks = response.data
+            } catch (error) {
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Failed to load tasks', 'error')
+            }
         },
         async handleAddTask(taskData) {
-            const notificationStore = useNotificationStore()
-
-            const response = await api.post('/tasks', taskData)
-            this.getTasks()
+            try{
+                await api.post('/tasks', taskData)
+                this.getTasks()
             
-            notificationStore.show('Task created successfully!')
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Task created successfully!')
+            }catch (error) {
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Failed to create a task', 'error')
+            }
         },
 
         async toggleComplete(task) {
-            await api.patch('/tasks/' + task._id, { completed: task.completed })
-            this.getTasks()
+            try{
+                await api.patch('/tasks/' + task._id, { completed: task.completed })
+                this.getTasks()
+                
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Task updated!')
+            }catch (error) {
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Failed to update task', 'error')
+            }
         },
         async updateTask(task) {
-            const updates = {
-                description: task.description,
-                priority: task.priority,
-                category: task.category
+            try{
+                const updates = {
+                    description: task.description,
+                    priority: task.priority,
+                    category: task.category
+                }
+
+                if (task.dueDate) {
+                    updates.dueDate = task.dueDate
+                }
+
+                if (task.tags) {
+                    updates.tags = task.tags
+                }
+                await api.patch('/tasks/' + task._id, updates)
+                this.getTasks()
+
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Task updated!')
+            }catch (error) {
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Failed to update task', 'error')
             }
 
-            if (task.dueDate) {
-                updates.dueDate = task.dueDate
-            }
-
-            await api.patch('/tasks/' + task._id, updates)
-            this.getTasks()
         },
         async deleteTask(task) {
-            await api.delete('/tasks/' + task._id)
-            this.getTasks()
-        },
+            try {
+                await api.delete('/tasks/' + task._id)
+                this.getTasks()
+
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Task deleted successfully!')
+            } catch (error) {
+                const notificationStore = useNotificationStore()
+                notificationStore.show('Failed to delete task', 'error')
+            }
+        }
     },
     computed: {
 
@@ -222,12 +244,10 @@ export default {
     },
     
     created() {
-        this.messageStore = useMessageStore()
         this.authStore = useAuthStore()
     },
 
     mounted() {
-        this.getHealth()
         this.getTasks()
     }
 
