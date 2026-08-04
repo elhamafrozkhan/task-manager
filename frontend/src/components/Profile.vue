@@ -1,120 +1,122 @@
 <template>
-    <div class="p-4">
+    <div class="max-w-2xl mx-auto p-4">
 
-        <div class="text-3xl text-center font-bold mb-4">
+        <div class="text-3xl font-bold mb-6">
             My Profile
         </div>
 
-        <img
-            v-if="authStore.hasAvatar"
-            :src="'http://localhost:3000/users/' + authStore.user._id + '/avatar?v=' + authStore.avatarVersion"
-            alt="Profile Avatar"
-            class="w-32 h-32 rounded-full object-cover"
-            @error="authStore.hasAvatar = false"
-        />
+        <div class="bg-white rounded-lg shadow-md p-6 mb-4">
+            <div class="flex items-center gap-4 mb-4">
+                <img
+                    v-if="authStore.hasAvatar"
+                    :src="apiUrl + '/users/' + authStore.user._id + '/avatar?v=' + authStore.avatarVersion"
+                    alt="Profile Avatar"
+                    class="w-20 h-20 rounded-full object-cover border"
+                    @error="authStore.hasAvatar = false"
+                />
 
-        <p v-if="!isEditingName">
+                <div class="flex-1">
+                    <template v-if="!isEditingName">
+                        <p class="text-lg font-semibold">{{ authStore.user?.name }}</p>
+                        <p class="text-slate-500">{{ authStore.user?.email }}</p>
+                    </template>
 
-            {{ authStore.user?.name }}
+                    <div v-else class="flex flex-col gap-2">
+                        <input
+                            type="text"
+                            v-model="editedName"
+                            class="border p-2 rounded w-full"
+                        />
+                        <input
+                            type="text"
+                            v-model="editedEmail"
+                            class="border p-2 rounded w-full"
+                        />
+                    </div>
+                </div>
 
-        </p>
-        <p v-if="!isEditingName">            
-            {{ authStore.user?.email }}
-        </p>
+                <button v-if="!isEditingName" @click="isEditingName = true"
+                    type="button"
+                    class="text-sm px-3 py-1 rounded border hover:bg-slate-50"
+                >
+                    Edit
+                </button>
 
-        <input
-            v-if="isEditingName"
-            type="text"
-            v-model="editedName"
-            class="border p-2"
-        />
+                <button v-else @click="saveProfile"
+                    type="button"
+                    class="text-sm px-3 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+                >
+                    Save
+                </button>
+            </div>
 
-        <input
-            v-if="isEditingName"
-            type="text"
-            v-model="editedEmail"
-            class="border p-2"
-        />
+            <div class="flex items-center gap-2">
+                <input
+                    type="file"
+                    @change="handleFileSelect"
+                    class="text-sm flex-1 file:mr-3 file:px-3 file:py-1 file:rounded file:border-0 file:bg-indigo-50 file:text-indigo-700 file:text-sm hover:file:bg-indigo-100"
+                />
 
-        <input
-            v-if="isEditingPassword"
-            type="password"
-            v-model="newPassword"
-            class="border p-2"
-        />
+                <button @click="uploadAvatar"
+                    type="button"
+                    class="text-sm px-3 py-1 rounded border hover:bg-slate-50"
+                >
+                    Upload
+                </button>
 
-        <button v-if="!isEditingName" @click="isEditingName = true"
-            type="button" 
-            class="border p-2"
-        >
-            Edit
+                <button @click="removeAvatar"
+                    type="button"
+                    class="text-sm px-3 py-1 rounded border hover:bg-slate-50"
+                >
+                    Remove Avatar
+                </button>
+            </div>
+        </div>
 
-        </button>
+        <div class="bg-white rounded-lg shadow-md p-6 mb-4">
+            <div class="flex items-center gap-2">
+                <input
+                    v-if="isEditingPassword"
+                    type="password"
+                    v-model="newPassword"
+                    placeholder="New password"
+                    class="border p-2 rounded flex-1"
+                />
 
-        <button v-else @click="saveProfile" 
-            type="button" 
-            class="border p-2"
-        >
-            Save
+                <button v-if="!isEditingPassword" @click="isEditingPassword = true"
+                    type="button"
+                    class="text-sm px-3 py-1 rounded border hover:bg-slate-50"
+                >
+                    Change Password
+                </button>
 
-        </button>
+                <button v-else @click="savePassword"
+                    type="button"
+                    class="text-sm px-3 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+                >
+                    Save Password
+                </button>
+            </div>
+        </div>
 
-        <button v-if="!isEditingPassword" @click="isEditingPassword = true"
-            type="button" 
-            class="border p-2"
-        >
-            Change Password
+        <div class="bg-white rounded-lg shadow-md p-6 mb-4">
+            <button @click="logoutAllDevices"
+                type="button"
+                class="text-sm px-3 py-1 rounded border hover:bg-slate-50"
+            >
+                Logout All Devices
+            </button>
+        </div>
 
-        </button>
-
-        <button v-else @click="savePassword" 
-            type="button" 
-            class="border p-2"
-        >
-            Save Password
-
-        </button>
-
-        <input 
-            type="file" 
-            @change="handleFileSelect" 
-            class="border p-2" 
-        />
-
-        <button @click="uploadAvatar" 
-            type="button" 
-            class="border p-2"
-        >
-            Upload
-
-        </button>
-
-        <button
-            @click="removeAvatar"
-            type="button"
-            class="border p-2"
-        >
-            Remove Avatar
-        </button>
-
-        <button
-            @click="logoutAllDevices"
-            type="button"
-            class="border p-2"
-        >
-            Logout All Devices
-        </button>
-
-        <button
-            @click="deleteAccount"
-            type="button"
-            class="border p-2"
-        >
-            Delete Account
-        </button>
-
-
-       
+        <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+            <p class="text-sm text-red-700 mb-2">Danger zone — this action cannot be undone.</p>
+            <button @click="deleteAccount"
+                type="button"
+                class="text-sm px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700"
+            >
+                Delete Account
+            </button>
+        </div>
     </div>
 </template>
 
@@ -127,6 +129,7 @@ export default {
     data(){
         return {
             authStore: null,
+            apiUrl: import.meta.env.VITE_API_URL,
             isEditingName: false,
             isEditingPassword: false,
             editedName: '',

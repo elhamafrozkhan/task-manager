@@ -1,43 +1,41 @@
 <template>
     <span
+        class="rounded-full px-3 py-1 text-xs font-medium"
         :class="{
-            'bg-red-200 text-red-800 border p-2': task.priority === 'high',
-            'bg-yellow-200 text-yellow-800 border p-2': task.priority === 'medium',
-            'bg-green-200 text-green-800 border p-2': task.priority === 'low'
+            'bg-red-100 text-red-700': task.priority === 'high',
+            'bg-amber-100 text-amber-700': task.priority === 'medium',
+            'bg-emerald-100 text-emerald-700': task.priority === 'low'
         }"
     >
-        {{ task.priority }} 
-
+        {{ task.priority }}
     </span>
 
     <span
-        class="border p-2"
-        :class="{
-            'bg-red-700 text-white': isOverdue(task)
-        }"
+        v-if="task.dueDate"
+        class="rounded-full px-3 py-1 text-xs font-medium"
+        :class="isOverdue(task) ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-600'"
     >
         {{ formatDate(task.dueDate) }}
     </span>
+
     <span
+        class="rounded-full px-3 py-1 text-xs font-medium"
         :class="{
-            'bg-indigo-200 text-indigo-800 border p-2': task.category === 'work',
-            'bg-emerald-200 text-emerald-800 border p-2': task.category === 'personal',
-            'bg-amber-200 text-amber-800 border p-2': task.category === 'shopping',
-            'bg-purple-200 text-purple-800 border p-2': task.category === 'learning'
+            'bg-indigo-100 text-indigo-700': task.category === 'work',
+            'bg-emerald-100 text-emerald-700': task.category === 'personal',
+            'bg-amber-100 text-amber-700': task.category === 'shopping',
+            'bg-purple-100 text-purple-700': task.category === 'learning'
         }"
     >
-        {{ task.category }} 
-
+        {{ task.category }}
     </span>
 
-        <span v-if="task.tags && task.tags.length > 0">
-        <span
-            v-for="tag in task.tags"
-            :key="tag"
-            class="bg-gray-200 text-gray-800 border p-2"
-        >
-            {{ tag }}
-        </span>
+    <span
+        v-for="tag in task.tags"
+        :key="tag"
+        class="rounded-full px-3 py-1 text-xs font-medium bg-slate-100 text-slate-600"
+    >
+        {{ tag }}
     </span>
 </template>
 

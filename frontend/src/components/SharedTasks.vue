@@ -1,37 +1,39 @@
 <template>
-    <div class="p-4">
-        <div class="text-3xl text-center font-bold mb-4">
+    <div class="max-w-4xl mx-auto p-4">
+        <div class="text-3xl font-bold mb-6">
             Shared Tasks
         </div>
 
-         <input
+        <input
             type="text"
             v-model="searchQuery"
             placeholder="Search shared tasks..."
-            class="border p-2 mb-3"
+            class="border p-2 rounded w-full mb-4"
         />
 
-        <div v-for="task in filteredTasks" :key="task._id" class="mb-3">
+        <div v-for="task in filteredTasks" :key="task._id" class="bg-white rounded-lg shadow-md p-4 mb-3">
+            <div class="flex items-start gap-3">
+                <input
+                    type="checkbox"
+                    v-model="task.completed"
+                    @change="toggleComplete(task)"
+                    class="mt-1 w-5 h-5 accent-indigo-600"
+                />
 
-            <input 
-                type="checkbox"
-                v-model="task.completed"
-                @change="toggleComplete(task)"  
-            />
-            <p class="mb-2">
-                {{ task.description }}
+                <div class="flex-1">
+                    <div :class="{ 'line-through text-slate-400': task.completed }">
+                        {{ task.description }}
+                    </div>
 
-            </p>
+                    <p class="text-sm text-slate-500 mt-1">
+                        Shared by: {{ task.owner?.name || task.owner?.email }}
+                    </p>
 
-            <p class="mb-2">
-                Shared by:
-                {{ task.owner?.name || task.owner?.email  }}
-            </p>
-
-             <p class="mb-2">
-                <TaskBadges :task="task" />
-
-            </p>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <TaskBadges :task="task" />
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>

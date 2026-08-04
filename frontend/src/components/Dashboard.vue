@@ -1,97 +1,107 @@
 <template>
 
-    <div class="p-4">
-        <div class="text-3xl text-center font-bold mb-4"
-            >Dashboard
-        </div>
-        <p>            
-            {{ authStore.user?.name }}
-        </p>
-        <div class="mb-3">
+    <div class="max-w-4xl mx-auto p-4">
 
-            <p class="mb-3">
-                Total: {{ taskStats.total }}
-                - Completed: {{ taskStats.completed }}
-                - Pending: {{ taskStats.pending }}
-                - Overdue: {{ taskStats.overdue }}
+        <div class="mb-6">
+            <div class="text-3xl font-bold">
+                Dashboard
+            </div>
+            <p class="text-slate-500">
+                {{ authStore.user?.name }}
             </p>
-
-            <button @click="currentFilter = 'all'" 
-                type="button" 
-                class="border p-2"
-                :class="{
-                    'bg-blue-500 text-white': currentFilter === 'all'
-                }"
-            > 
-                All
-
-            </button>
-
-            <button @click="currentFilter = 'active'" 
-                type="button" 
-                class="border p-2"
-                :class="{
-                    'bg-blue-500 text-white': currentFilter === 'active'
-                }"
-            >
-                Active
-            </button>
-
-            <button @click="currentFilter = 'completed'" 
-                type="button" 
-                class="border p-2"
-                :class="{
-                    'bg-blue-500 text-white': currentFilter === 'completed'
-                }"
-            >   
-                Completed
-
-            </button>
-
         </div>
-        <input 
-            type="text"
-            v-model="searchQuery"
-            placeholder="Search tasks..."
-            class="border p-2" 
-        />
 
-        <select v-model="sortBy" class="border p-2">
-            <option value="none">No Sorting</option>
-            <option value="dueDate">Due Date</option>
-            <option value="priority">Priority</option>
-        </select>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+                <div class="text-xs text-slate-500 uppercase">Total</div>
+                <div class="text-2xl font-bold">{{ taskStats.total }}</div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+                <div class="text-xs text-slate-500 uppercase">Completed</div>
+                <div class="text-2xl font-bold text-emerald-600">{{ taskStats.completed }}</div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+                <div class="text-xs text-slate-500 uppercase">Pending</div>
+                <div class="text-2xl font-bold text-amber-600">{{ taskStats.pending }}</div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+                <div class="text-xs text-slate-500 uppercase">Overdue</div>
+                <div class="text-2xl font-bold text-red-600">{{ taskStats.overdue }}</div>
+            </div>
+        </div>
 
-        <select v-model="categoryFilter" class="border p-2">
-            <option value="all">All Categories</option>
-            <option value="work">Work</option>
-            <option value="personal">Personal</option>
-            <option value="shopping">Shopping</option>
-            <option value="learning">Learning</option>
-        </select>
+        <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+            <div class="flex gap-2 mb-3">
+                <button @click="currentFilter = 'all'"
+                    type="button"
+                    class="px-3 py-1 rounded text-sm border"
+                    :class="currentFilter === 'all' ? 'bg-indigo-600 text-white border-indigo-600' : 'hover:bg-slate-50'"
+                >
+                    All
+                </button>
 
-        <select v-model="priorityFilter" class="border p-2">
-            <option value="all">All Priorities</option>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-        </select>
-        
-        <div v-for="task in filteredTasks" :key="task._id">
+                <button @click="currentFilter = 'active'"
+                    type="button"
+                    class="px-3 py-1 rounded text-sm border"
+                    :class="currentFilter === 'active' ? 'bg-indigo-600 text-white border-indigo-600' : 'hover:bg-slate-50'"
+                >
+                    Active
+                </button>
 
-            <TaskItem :task="task" 
-                @toggle-complete="toggleComplete" 
+                <button @click="currentFilter = 'completed'"
+                    type="button"
+                    class="px-3 py-1 rounded text-sm border"
+                    :class="currentFilter === 'completed' ? 'bg-indigo-600 text-white border-indigo-600' : 'hover:bg-slate-50'"
+                >
+                    Completed
+                </button>
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+                <input
+                    type="text"
+                    v-model="searchQuery"
+                    placeholder="Search tasks..."
+                    class="border p-2 rounded flex-1"
+                />
+
+                <select v-model="sortBy" class="border p-2 rounded">
+                    <option value="none">No Sorting</option>
+                    <option value="dueDate">Due Date</option>
+                    <option value="priority">Priority</option>
+                </select>
+
+                <select v-model="categoryFilter" class="border p-2 rounded">
+                    <option value="all">All Categories</option>
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="learning">Learning</option>
+                </select>
+
+                <select v-model="priorityFilter" class="border p-2 rounded">
+                    <option value="all">All Priorities</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+        </div>
+
+        <div>
+            <TaskItem v-for="task in filteredTasks" :key="task._id"
+                :task="task"
+                @toggle-complete="toggleComplete"
                 @delete-task="deleteTask"
                 @update-task="updateTask"
-                @task-shared="getTasks" 
+                @task-shared="getTasks"
             />
-
         </div>
-        
-        <AddTaskForm @add-task="handleAddTask" />      
+
+        <AddTaskForm @add-task="handleAddTask" />
 
     </div>
-             
+
 </template>
 
 
