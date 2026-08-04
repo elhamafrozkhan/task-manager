@@ -1,152 +1,154 @@
 <template>
-    <input 
-        type="checkbox"
-        v-model="task.completed"
-        @change="$emit('toggle-complete', task)"  
-    />
+    <div class="bg-white rounded-lg shadow-md p-4 mb-3">
 
-    <div v-if="!isEditing">
+        <div class="flex items-start justify-between gap-3">
+            <div class="flex items-start gap-3 flex-1">
+                <input
+                    type="checkbox"
+                    v-model="task.completed"
+                    @change="$emit('toggle-complete', task)"
+                    class="mt-1 w-5 h-5 accent-indigo-600"
+                />
 
-        {{ task.description }}
+                <div v-if="!isEditing" class="flex-1" :class="{ 'line-through text-slate-400': task.completed }">
+                    {{ task.description }}
+                </div>
 
-    </div>
+                <div v-if="isEditing" class="flex-1 flex flex-col gap-2">
+                    <input
+                        type="text"
+                        v-model="editedDescription"
+                        class="border p-2 rounded w-full"
+                    />
 
-    <input
-        v-if="isEditing"
-        type="text"
-        v-model="editedDescription"
-        class="border p-2"
-    />
+                    <div class="grid grid-cols-2 gap-2">
+                        <select v-model="editedPriority" class="border p-2 rounded">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
 
-    <select
-        v-if="isEditing"
-        v-model="editedPriority"
-        class="border p-2"
-    >
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high">High</option>
-    </select>
+                        <select v-model="editedCategory" class="border p-2 rounded">
+                            <option value="work">Work</option>
+                            <option value="personal">Personal</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="learning">Learning</option>
+                        </select>
 
-    <select
-        v-if="isEditing"
-        v-model="editedCategory"
-        class="border p-2"
-    >
-        <option value="work">Work</option>
-        <option value="personal">Personal</option>
-        <option value="shopping">Shopping</option>
-        <option value="learning">Learning</option>
+                        <input
+                            type="date"
+                            v-model="editedDueDate"
+                            class="border p-2 rounded"
+                        />
 
-    </select>
+                        <input
+                            type="text"
+                            v-model="editedTags"
+                            placeholder="tags, comma, separated"
+                            class="border p-2 rounded"
+                        />
+                    </div>
+                </div>
+            </div>
 
-    <input 
-        v-if="isEditing" 
-        type="date" 
-        v-model="editedDueDate" 
-        class="border p-2" 
-    />
-
-    <input 
-        v-if="isEditing" 
-        type="text" 
-        v-model="editedTags" 
-        placeholder="tags, comma, separated"
-        class="border p-2" 
-    />
-
-        <TaskBadges :task="task" />
-
-    <button v-if="!isEditing" @click="isEditing = true"
-        type="button" 
-        class="border p-2"
-    >
-        Edit
-
-    </button>
-
-    <button v-else @click="saveEdit" 
-        type="button" 
-        class="border p-2"
-    >
-        Save
-
-    </button>
-
-    <button v-if="isEditing"
-        @click="cancelEdit"
-        type="button"
-        class="border p-2"
-    >
-        Cancel
-    </button>
-
-    <button v-if="!isSharing" @click="isSharing = true" 
-        type="button" 
-        class="border p-2"
-    >
-        Share
-
-    </button>
-
-    <button v-if="!isUnsharing" @click="isUnsharing = true" 
-        type="button" 
-        class="border p-2"
-    >
-        Unshare
-
-    </button>
-
-    <input 
-        v-if="isSharing" 
-        type="email" 
-        v-model="shareEmail" 
-        class="border p-2" 
-    />
-
-    <button v-if="isSharing" @click="sendShare" 
-        type="button" 
-        class="border p-2"
-    >
-        Send
-
-    </button>
-
-    <input 
-        v-if="isUnsharing" 
-        type="email" 
-        v-model="unshareEmail" 
-        class="border p-2" 
-    />
-
-    <button v-if="isUnsharing" @click="sendUnshare()"  
-        type="button" 
-        class="border p-2"
-    >
-        Remove
-    </button>
-
-    <span v-if="task.sharedWith.length > 0">
-        Shared with
-        <span v-for="person in task.sharedWith" :key="person._id">
-            {{ person.name }},
-
-                <button @click.prevent="sendUnshare(person.email)"
+            <div class="flex items-center gap-2 shrink-0">
+                <button v-if="!isEditing" @click="isEditing = true"
                     type="button"
-                    class="border p-2"
+                    class="text-sm px-3 py-1 rounded border hover:bg-slate-50"
+                >
+                    Edit
+                </button>
+
+                <button v-else @click="saveEdit"
+                    type="button"
+                    class="text-sm px-3 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+                >
+                    Save
+                </button>
+
+                <button v-if="isEditing"
+                    @click="cancelEdit"
+                    type="button"
+                    class="text-sm px-3 py-1 rounded border hover:bg-slate-50"
+                >
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-3 flex flex-wrap gap-2">
+            <TaskBadges :task="task" />
+        </div>
+
+        <div class="mt-3 pt-3 border-t flex flex-wrap items-center gap-2">
+            <button v-if="!isSharing" @click="isSharing = true"
+                type="button"
+                class="text-sm px-3 py-1 rounded border hover:bg-slate-50"
+            >
+                Share
+            </button>
+
+            <button v-if="!isUnsharing" @click="isUnsharing = true"
+                type="button"
+                class="text-sm px-3 py-1 rounded border hover:bg-slate-50"
+            >
+                Unshare
+            </button>
+
+            <template v-if="isSharing">
+                <input
+                    type="email"
+                    v-model="shareEmail"
+                    placeholder="person@example.com"
+                    class="border p-1 rounded text-sm"
+                />
+                <button @click="sendShare"
+                    type="button"
+                    class="text-sm px-3 py-1 rounded bg-emerald-600 text-white hover:bg-emerald-700"
+                >
+                    Send
+                </button>
+            </template>
+
+            <template v-if="isUnsharing">
+                <input
+                    type="email"
+                    v-model="unshareEmail"
+                    placeholder="person@example.com"
+                    class="border p-1 rounded text-sm"
+                />
+                <button @click="sendUnshare()"
+                    type="button"
+                    class="text-sm px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700"
                 >
                     Remove
                 </button>
-        </span>
-    </span>
+            </template>
 
-    <button @click.prevent="confirmDelete(task)"
-        type="button"
-        class="border p-2"
-    >
-        Delete
-    </button>
+            <button @click.prevent="confirmDelete(task)"
+                type="button"
+                class="text-sm px-3 py-1 rounded text-red-600 hover:bg-red-50 ml-auto"
+            >
+                Delete
+            </button>
+        </div>
 
+        <div v-if="task.sharedWith.length > 0" class="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-600">
+            <span>Shared with:</span>
+            <span v-for="person in task.sharedWith" :key="person._id"
+                class="flex items-center gap-1 bg-slate-100 rounded-full pl-3 pr-1 py-1"
+            >
+                {{ person.name }}
+                <button @click.prevent="sendUnshare(person.email)"
+                    type="button"
+                    class="w-5 h-5 rounded-full hover:bg-slate-300 text-slate-500"
+                >
+                    ×
+                </button>
+            </span>
+        </div>
+
+    </div>
 </template>
 
 <script>

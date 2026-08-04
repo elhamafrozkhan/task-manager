@@ -1,63 +1,60 @@
 <template>
-    <div class="p-4">
+    <div class="min-h-screen flex items-center justify-center bg-slate-50">
 
-        <div class="text-3xl text-center font-bold mb-4">
-            Welcome Back
-        </div>
-        <p class="text-center"> 
-            Sign in to your TaskManager account
-        </p>
+        <div class="max-w-md w-full mx-auto bg-white rounded-lg shadow-md p-6">
 
-
-        <form @submit.prevent="handleLogin">
-
-            <div class="mb-3">
-
-                <label>
-                    Email
-                </label>
-
-                <input 
-                    type="email"
-                    v-model="email"
-                    class="border p-2"
-                />
-
+            <div class="text-3xl text-center font-bold mb-4">
+                Welcome Back
             </div>
 
-            <div class="mb-3">
-
-                <label>
-                    Password
-                </label>
-
-                <input 
-                    type="password"
-                    v-model="password"
-                    class="border p-2"
-                />
-
-            </div>
-
-            <button 
-                type="submit"
-                class="border p-2"
-            >
-                Login
-            </button>
-
-            <p class="mt-4 text-center">
-                Don't have an account?
-                <router-link
-                    to="/register"
-                    class="underline"
-                >
-                    Sign up
-                </router-link>
+            <p class="text-center text-slate-600 mb-6"> 
+                Sign in to your TaskManager account
             </p>
 
-        </form>
+            <form @submit.prevent="handleLogin">
 
+                <div class="mb-3">
+                    <label class="block mb-1 text-sm font-medium">
+                        Email
+                    </label>
+
+                    <input 
+                        type="email"
+                        v-model="email"
+                        class="border p-2 w-full rounded"
+                    />
+                </div>
+
+                <div class="mb-3">
+                    <label class="block mb-1 text-sm font-medium">
+                        Password
+                    </label>
+
+                    <input 
+                        type="password"
+                        v-model="password"
+                        class="border p-2 w-full rounded"
+                    />
+                </div>
+
+                <button 
+                    type="submit"
+                    class="w-full py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700"
+                >
+                    Login
+                </button>
+
+                <p class="mt-4 text-center">
+                    Don't have an account?
+                    <router-link
+                        to="/register"
+                        class="underline text-indigo-600"
+                    >
+                        Sign up
+                    </router-link>
+                </p>
+            </form>
+        </div>
     </div>
 
 </template>
