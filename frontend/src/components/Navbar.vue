@@ -68,7 +68,7 @@ export default{
             const authStore = useAuthStore()
             authStore.logout()
             this.$router.push('/login')
-            }
+        }
     }
 }
 
