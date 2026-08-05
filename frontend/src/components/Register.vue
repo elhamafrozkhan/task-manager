@@ -1,55 +1,72 @@
 <template>
-    <div class="p-4">
+    <div class="min-h-screen flex items-center justify-center bg-slate-50">
 
-        <div class="text-3xl text-center font-bold mb-4">
-            Create Account
+        <div class="max-w-md w-full mx-auto bg-white rounded-lg shadow-md p-6">
+
+            <div class="text-3xl text-center font-bold mb-4">
+                Create Account
+            </div>
+
+            <p class="text-center text-slate-600 mb-6">
+                Sign up for a new TaskManager account
+            </p>
+
+            <form @submit.prevent="handleRegister">
+
+                <div class="mb-3">
+                    <label class="block mb-1 text-sm font-medium">
+                        Name
+                    </label>
+
+                    <input
+                        type="text"
+                        v-model="name"
+                        class="border p-2 w-full rounded"
+                    />
+                </div>
+
+                <div class="mb-3">
+                    <label class="block mb-1 text-sm font-medium">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        v-model="email"
+                        class="border p-2 w-full rounded"
+                    />
+                </div>
+
+                <div class="mb-3">
+                    <label class="block mb-1 text-sm font-medium">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        v-model="password"
+                        class="border p-2 w-full rounded"
+                    />
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700"
+                >
+                    Register
+                </button>
+
+                <p class="mt-4 text-center">
+                    Already have an account?
+                    <router-link
+                        to="/login"
+                        class="underline text-indigo-600"
+                    >
+                        Log in
+                    </router-link>
+                </p>
+            </form>
         </div>
-
-        <p class="text-center mb-4">
-            Sign up for a new TaskManager account
-        </p>
-
-        <form @submit.prevent="handleRegister">
-
-            <div class="mb-3">
-                <label>Name</label>
-
-                <input
-                    type="text"
-                    v-model="name"
-                    class="border p-2"
-                />
-            </div>
-
-            <div class="mb-3">
-                <label>Email</label>
-
-                <input
-                    type="email"
-                    v-model="email"
-                    class="border p-2"
-                />
-            </div>
-
-            <div class="mb-3">
-                <label>Password</label>
-
-                <input
-                    type="password"
-                    v-model="password"
-                    class="border p-2"
-                />
-            </div>
-
-            <button
-                type="submit"
-                class="border p-2"
-            >
-                Register
-            </button>
-
-        </form>
-
     </div>
 </template>
 

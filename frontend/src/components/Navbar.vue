@@ -1,10 +1,10 @@
 <template>    
-    <nav class="flex items-center justify-between border-b shadow-sm bg-white p-4">
+    <nav class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b shadow-sm bg-white p-4">
         <div class="text-3xl font-bold"
             >Task Manager
         </div>
-    
-        <div class="flex items-center gap-4">
+
+        <div class="flex flex-wrap items-center gap-4">
             <router-link to="/" 
             >
                 Dashboard               
