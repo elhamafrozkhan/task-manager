@@ -30,6 +30,10 @@
             </div>
         </div>
 
+        <div class="mb-6">
+            <AddTaskForm @add-task="handleAddTask" />
+        </div>
+
         <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
             <div class="flex gap-2 mb-3">
                 <button @click="currentFilter = 'all'"
@@ -61,9 +65,18 @@
                 <input
                     type="text"
                     v-model="searchQuery"
+                    @keyup.enter="applySearch"
                     placeholder="Search tasks..."
                     class="border p-2 rounded flex-1"
                 />
+
+                <button
+                    type="button"
+                    @click="applySearch"
+                    class="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+                >
+                    Search
+                </button>
 
                 <select v-model="sortBy" class="border p-2 rounded">
                     <option value="none">No Sorting</option>
@@ -98,8 +111,6 @@
             />
         </div>
 
-        <AddTaskForm @add-task="handleAddTask" />
-
     </div>
 
 </template>
@@ -125,6 +136,7 @@ export default {
             authStore: null,
             currentFilter: 'all',
             searchQuery: '',
+            appliedSearchQuery: '',
             sortBy: 'none',
             categoryFilter: 'all',
             priorityFilter: 'all',
@@ -133,6 +145,9 @@ export default {
     },    
 
     methods: {
+        applySearch() {
+            this.appliedSearchQuery = this.searchQuery
+        },
         async getTasks() {
             try {
                 const response = await api.get('/tasks')
@@ -231,8 +246,8 @@ export default {
             if (this.currentFilter === 'completed') {
                 result = this.tasks.filter(task => task.completed)
             }
-            if (this.searchQuery) {
-                result = result.filter(task => task.description.toLowerCase().includes(this.searchQuery.toLowerCase()))
+            if (this.appliedSearchQuery) {
+                result = result.filter(task => task.description.toLowerCase().includes(this.appliedSearchQuery.toLowerCase()))
             }
             if (this.categoryFilter !== 'all') {
                 result = result.filter(task => task.category === this.categoryFilter)

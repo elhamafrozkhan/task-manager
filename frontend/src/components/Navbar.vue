@@ -1,7 +1,12 @@
 <template>    
-    <nav class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b shadow-sm bg-white p-4">
-        <div class="text-3xl font-bold"
-            >Task Manager
+    <nav class="sticky top-0 z-40 flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b border-slate-200 shadow-sm bg-white p-4">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                </svg>
+            </div>
+            <span class="text-2xl font-bold">Task Manager</span>
         </div>
 
         <div class="flex flex-wrap items-center gap-4">
