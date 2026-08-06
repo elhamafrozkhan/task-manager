@@ -4,12 +4,23 @@
             Shared Tasks
         </div>
 
-        <input
-            type="text"
-            v-model="searchQuery"
-            placeholder="Search shared tasks..."
-            class="border p-2 rounded w-full mb-4"
-        />
+        <div class="flex gap-3 mb-4">
+            <input
+                type="text"
+                v-model="searchQuery"
+                @keyup.enter="applySearch"
+                placeholder="Search shared tasks..."
+                class="border p-2 rounded flex-1"
+            />
+
+            <button
+                type="button"
+                @click="applySearch"
+                class="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+            >
+                Search
+            </button>
+        </div>
 
         <div v-for="task in filteredTasks" :key="task._id" class="bg-white rounded-lg shadow-md p-4 mb-3">
             <div class="flex items-start gap-3">
@@ -53,11 +64,15 @@ export default {
     data() {
         return {
             tasks: [],
-            searchQuery: ''
+            searchQuery: '',
+            appliedSearchQuery: ''
         }
     },
 
     methods: {
+        applySearch() {
+            this.appliedSearchQuery = this.searchQuery
+        },
         async getSharedTasks() {
             try{
                 const response = await api.get('/tasks/shared')
@@ -85,11 +100,11 @@ export default {
         filteredTasks() {
             let result = this.tasks
 
-            if (this.searchQuery) {
+            if (this.appliedSearchQuery) {
                 result = result.filter(task =>
                     task.description
                         .toLowerCase()
-                        .includes(this.searchQuery.toLowerCase())
+                        .includes(this.appliedSearchQuery.toLowerCase())
                 )
             }
 
