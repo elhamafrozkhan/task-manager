@@ -1,49 +1,58 @@
 # Task Manager
 
-A full stack task management application built as a portfolio and learning project. It pairs a Node.js and Express REST API backed by MongoDB with a Vue 3 single page application styled using Tailwind CSS.
+A full stack task management application. Node.js and Express REST API backed by MongoDB, paired with a Vue 3 single page application styled using Tailwind CSS.
 
-## What This Project Does
+## Overview
 
-Task Manager lets a registered user create, organize, and track personal tasks. Every task can carry a priority level, a due date, a category, and free form tags. A task can also be shared with another registered user by email, so that person can view it and mark it complete without being able to edit or delete it. Each user also has a profile page where they can update their account details and upload a personal avatar image.
+Registered users can create, organize, and track personal tasks. Each task carries a priority level, due date, category, and free form tags. Tasks can be shared with another registered user by email, letting that person view the task and mark it complete without being able to edit or delete it. Every user has a profile page for updating account details and uploading an avatar image.
 
-## Project Structure
+## Repository Layout
 
-This repository is organized as a monorepo containing two independent applications plus a shared root configuration.
+| Path | Contents |
+|------|----------|
+| `backend/` | Express and MongoDB API server. See [backend/README.md](backend/README.md) |
+| `frontend/` | Vue 3 and Vite client application. See [frontend/README.md](frontend/README.md) |
+| `package.json` | npm workspaces config so both apps install and run from the root |
 
-* `backend/` holds the Express and MongoDB API server. See `backend/README.md` for full details.
-* `frontend/` holds the Vue 3 and Vite client application. See `frontend/README.md` for full details.
-* `package.json` at the root defines npm workspaces so both applications can be installed and run from one place.
+## Tech Stack
 
-## Tech Stack Overview
+| Layer | Technologies |
+|-------|--------------|
+| Backend | Node.js, Express, MongoDB, Mongoose |
+| Auth | JSON Web Tokens, bcrypt |
+| Media | Multer, Sharp |
+| Email | SendGrid |
+| API Docs | Swagger (OpenAPI) |
+| Testing | Jest, Supertest |
+| Frontend | Vue 3 (Options API), Vite, Vue Router, Pinia |
+| Styling | Tailwind CSS v4 |
+| HTTP Client | Axios |
 
-**Backend:** Node.js, Express, MongoDB with Mongoose, JSON Web Token authentication, bcrypt password hashing, Multer and Sharp for avatar image processing, SendGrid for transactional email, Swagger (OpenAPI) for interactive API documentation, and Jest with Supertest for automated testing.
+## Quick Start
 
-**Frontend:** Vue 3 (Options API), Vite as the build tool, Vue Router for client side routing, Pinia for state management, Tailwind CSS for styling, and Axios for HTTP requests.
+| Step | Command or Action |
+|------|-------------------|
+| 1. Install dependencies | `npm install` (from project root) |
+| 2. Configure backend | Create `backend/config/dev.env`. See [backend/README.md](backend/README.md) |
+| 3. Configure frontend | Create `frontend/.env`. See [frontend/README.md](frontend/README.md) |
+| 4. Start API server | `npm run dev:backend` |
+| 5. Start client | `npm run dev:frontend` (separate terminal) |
 
-## Getting Started
+| Service | Default URL |
+|---------|-------------|
+| Frontend | `http://localhost:5173` |
+| Backend API | `http://localhost:3000` |
+| API Documentation | `http://localhost:3000/docs` |
 
-1. Install dependencies for both workspaces from the project root:
-   `npm install`
-2. Set up the backend environment file as described in `backend/README.md` (MongoDB connection string, JWT secret, SendGrid key, and port).
-3. Set up the frontend environment file as described in `frontend/README.md` (the backend API base URL).
-4. Start the backend:
-   `npm run dev:backend`
-5. In a separate terminal, start the frontend:
-   `npm run dev:frontend`
-6. Open the frontend at the address Vite prints in the terminal (typically `http://localhost:5173`).
-7. Once the backend is running, visit the interactive API documentation at `http://localhost:3000/docs`.
+## Features
 
-## Core Features
-
-* User registration, login, logout, and logout of all active sessions, all secured with JWT authentication.
-* Full task lifecycle: create, read, update, and delete.
-* Task filtering by completion status, priority, category, and due date, along with keyword search and sorting.
-* Sharing a task with another user by email, with the ability to revoke that access later.
-* A dedicated view for tasks that other people have shared with you.
-* Profile management, including avatar upload, avatar removal, and account deletion.
-* A friendly 404 page for any unmatched route.
-* Interactive, fully testable API documentation generated with Swagger.
-
-## Documentation
-
-See `backend/README.md` for API details, environment variables, data models, and authentication. See `frontend/README.md` for the page and component structure, routing, state management, and styling approach.
+| Area | Capability |
+|------|------------|
+| Accounts | Register, login, logout, logout of all active sessions |
+| Tasks | Create, read, update, delete |
+| Organization | Priority, due date, category, tags |
+| Discovery | Filter by status, priority, category, and due date, plus keyword search and sorting |
+| Collaboration | Share a task by email, revoke access, dedicated view for tasks shared with you |
+| Profile | Update account details, upload or remove avatar, delete account |
+| Reliability | Route guards on protected pages, toast notifications, custom 404 page |
+| Documentation | Interactive Swagger UI with live request testing |
