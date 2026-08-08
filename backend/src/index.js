@@ -1,6 +1,8 @@
 const express = require('express');
 require('./db/mongoose');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger');
 const userRouter = require('./routers/user');
 const taskRouter = require('./routers/task');
 
@@ -14,6 +16,7 @@ app.use(express.json());
 app.use(cors());
 app.use(userRouter);
 app.use(taskRouter);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 

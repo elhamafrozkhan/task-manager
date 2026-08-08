@@ -5,6 +5,29 @@ const auth = require('../middleware/auth');
 const router = new express.Router();
 
 
+/**
+ * @swagger
+ * /tasks:
+ *   post:
+ *     summary: Create a new task
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/TaskInput'
+ *     responses:
+ *       201:
+ *         description: Task created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *       400:
+ *         description: Validation error
+ */
 router.post('/tasks', auth, async(req, res) => {
     const task = new Task({
         ...req.body,
@@ -20,6 +43,51 @@ router.post('/tasks', auth, async(req, res) => {
     
 });
 
+/**
+ * @swagger
+ * /tasks/{id}/share:
+ *   post:
+ *     summary: Share a task with another user by email
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ShareRequest'
+ *     responses:
+ *       200:
+ *         description: Task shared
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *       400:
+ *         description: Missing email, user not found, or already shared
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Not the task owner
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Task not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 router.post('/tasks/:id/share', auth, async (req, res) => {
     try {
         const task = await Task.findById(req.params.id);
@@ -58,6 +126,51 @@ router.post('/tasks/:id/share', auth, async (req, res) => {
         res.status(500).send(e);
     }
 });
+/**
+ * @swagger
+ * /tasks/{id}/unshare:
+ *   delete:
+ *     summary: Remove a user's access to a shared task
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ShareRequest'
+ *     responses:
+ *       200:
+ *         description: Task unshared
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *       400:
+ *         description: Missing email, user not found, or not shared with this user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Not the task owner
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Task not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 router.delete('/tasks/:id/unshare', auth, async (req, res) => {
     try {
         const task = await Task.findById(req.params.id);
@@ -101,6 +214,56 @@ router.delete('/tasks/:id/unshare', auth, async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /tasks:
+ *   get:
+ *     summary: Get all of the logged-in user's tasks
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: completed
+ *         schema:
+ *           type: boolean
+ *       - in: query
+ *         name: priority
+ *         schema:
+ *           type: string
+ *           enum: [low, medium, high]
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: dueDate
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *         description: "Format: field:asc or field:desc, e.g. dueDate:desc"
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: skip
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: List of tasks
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Task'
+ *       500:
+ *         description: Server error
+ */
 //GET /tasks?completed=true
 //GET /tasks?limit=10&skip=0
 router.get('/tasks', auth, async(req, res) => {
@@ -145,6 +308,56 @@ router.get('/tasks', auth, async(req, res) => {
 
 });
 
+/**
+ * @swagger
+ * /tasks/shared:
+ *   get:
+ *     summary: Get tasks that other users have shared with the logged-in user
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: completed
+ *         schema:
+ *           type: boolean
+ *       - in: query
+ *         name: priority
+ *         schema:
+ *           type: string
+ *           enum: [low, medium, high]
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: dueDate
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *         description: "Format: field:asc or field:desc, e.g. dueDate:desc"
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: skip
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: List of shared tasks
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Task'
+ *       500:
+ *         description: Server error
+ */
 router.get('/tasks/shared', auth, async (req, res) => {
     const match = {};
     const sort = {};
@@ -188,6 +401,29 @@ router.get('/tasks/shared', auth, async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /tasks/{id}:
+ *   get:
+ *     summary: Get a task by ID
+ *     security: 
+ *       - bearerAuth: []
+ *     parameters: 
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *          type: string
+ *     responses:
+ *       200:
+ *         description: Task found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *       404:
+ *         description: Task not found
+ */
 router.get('/tasks/:id', auth, async(req, res) => {
     const _id = req.params.id;
 
@@ -203,6 +439,39 @@ router.get('/tasks/:id', auth, async(req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /tasks/{id}:
+ *   patch:
+ *     summary: Update a task
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/TaskUpdate'
+ *     responses:
+ *       200:
+ *         description: Task updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *       400:
+ *         description: Invalid update fields
+ *       403:
+ *         description: Not allowed to make this change
+ *       404:
+ *         description: Task not found
+ */
 router.patch('/tasks/:id', auth, async(req, res) => {
     const updates = Object.keys(req.body);
     const allowedUpdates = ['description', 'completed', 'priority', 'dueDate', 'category', 'tags'];
@@ -243,6 +512,31 @@ router.patch('/tasks/:id', auth, async(req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /tasks/{id}:
+ *   delete:
+ *     summary: Delete a task
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Task deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *       404:
+ *         description: Task not found
+ *       500:
+ *         description: Server error
+ */
 router.delete('/tasks/:id', auth, async(req, res) => {
     try{
         const task = await Task.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
