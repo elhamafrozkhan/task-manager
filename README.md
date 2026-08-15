@@ -21,7 +21,7 @@ Registered users can create, organize, and track personal tasks. Each task carri
 | Backend | Node.js, Express, MongoDB, Mongoose |
 | Auth | JSON Web Tokens, bcrypt |
 | Media | Multer, Sharp |
-| Email | SendGrid |
+| Email | Nodemailer |
 | API Docs | Swagger (OpenAPI) |
 | Testing | Jest, Supertest |
 | Frontend | Vue 3 (Options API), Vite, Vue Router, Pinia |
