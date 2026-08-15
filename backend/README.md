@@ -12,7 +12,7 @@ REST API server built with Node.js, Express, and MongoDB. Handles user accounts,
 | bcryptjs | Hash passwords before storage |
 | multer | Accept avatar file uploads |
 | sharp | Resize and normalize avatar images |
-| @sendgrid/mail | Welcome and cancellation emails |
+| nodemailer | Welcome and cancellation emails over SMTP |
 | swagger-jsdoc | Build the OpenAPI spec from route comments |
 | swagger-ui-express | Serve the interactive docs page |
 | jest, supertest | Automated testing |
@@ -30,7 +30,7 @@ REST API server built with Node.js, Express, and MongoDB. Handles user accounts,
 | `src/middleware/auth.js` | Verifies the bearer token and attaches `req.user` |
 | `src/routers/user.js` | Account, session, profile, and avatar routes |
 | `src/routers/task.js` | Task CRUD, filtering, and sharing routes |
-| `src/emails/account.js` | SendGrid transactional email helpers |
+| `src/emails/account.js` | Nodemailer transport and transactional email helpers |
 | `src/swagger.js` | OpenAPI definition, reusable schemas, security scheme |
 | `config/*.env` | Environment variables. Excluded from version control |
 
@@ -43,7 +43,8 @@ Create `config/dev.env` for development and `config/test.env` for the test suite
 | `PORT` | Port the server listens on |
 | `MONGODB_URL` | MongoDB connection string |
 | `JWT_SECRET` | Secret used to sign and verify auth tokens |
-| `SENDGRID_API_KEY` | API key for outbound account emails |
+| `EMAIL_USER` | Gmail address used to send account emails |
+| `EMAIL_PASS` | Gmail app password for that address |
 
 Both env files are already covered by `.gitignore`, so real secrets stay out of the repository.
 
@@ -57,7 +58,7 @@ Both env files are already covered by `.gitignore`, so real secrets stay out of 
 | 4 | `npm run dev` |
 | 5 | Visit `http://localhost:3000/docs` for the interactive API reference |
 
-If you do not have a SendGrid account, a placeholder key is fine. Email sending fails quietly and does not block any other feature.
+If you leave the email credentials as placeholders, sending fails quietly and is logged to the console. Registration and account deletion still work normally.
 
 ## Scripts
 
