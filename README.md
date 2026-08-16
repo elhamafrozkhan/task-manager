@@ -2,6 +2,43 @@
 
 A full stack task management application. Node.js and Express REST API backed by MongoDB, paired with a Vue 3 single page application styled using Tailwind CSS.
 
+## Live Demo
+
+| | Link |
+|---|---|
+| Application | https://task-manager-ioapp.vercel.app |
+| API Documentation | https://site--task-manager--5zdfgqx7ghtc.code.run/docs |
+
+**No signup needed.** Log in with the demo account below, it comes preloaded with tasks covering every feature.
+
+| Field | Value |
+|-------|-------|
+| Email | `demo@taskmanager.app` |
+| Password | `DemoAccess2026` |
+
+### What to look at
+
+| Feature | Where |
+|---------|-------|
+| Task statistics | Dashboard header, 19 tasks with completed, pending, and overdue counts |
+| Filtering and sorting | Filter bar, tasks span all 4 categories and all 3 priority levels |
+| Search | Search box on the dashboard and on the shared tasks page |
+| Editing | Expand any task to change its description, priority, due date, category, or tags |
+| Sharing outward | 4 dashboard tasks are shared with teammates, listed on each task card |
+| Sharing with several people | "Prepare slides for client demo" is shared with two people at once |
+| Shared with you | The Shared Tasks page holds 10 tasks from two different colleagues |
+| Profile | Update account details and upload an avatar |
+| API reference | Swagger UI at `/docs`, with live request testing |
+
+### Other demo accounts
+
+Two more accounts exist so the sharing feature can be seen from every angle. Log in as either one to view the same shared tasks from the other side.
+
+| Name | Email | Password |
+|------|-------|----------|
+| Alex Carter | `alex@taskmanager.app` | `AlexDemo2026` |
+| Elham Khan | `elham@taskmanager.app` | `ElhamDemo2026` |
+
 ## Overview
 
 Registered users can create, organize, and track personal tasks. Each task carries a priority level, due date, category, and free form tags. Tasks can be shared with another registered user by email, letting that person view the task and mark it complete without being able to edit or delete it. Every user has a profile page for updating account details and uploading an avatar image.

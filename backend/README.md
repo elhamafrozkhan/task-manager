@@ -67,6 +67,19 @@ If you leave the email credentials as placeholders, sending fails quietly and is
 | `npm start` | Run the server with plain Node |
 | `npm run dev` | Run with Nodemon and `config/dev.env` |
 | `npm test` | Run Jest against `config/test.env` |
+| `npm run seed` | Populate the database with demo accounts and sample tasks |
+
+## Seeding Demo Data
+
+`scripts/seed.js` creates three accounts and a spread of tasks that exercise every feature: all priorities, all categories, tags, completed and overdue items, and sharing in every direction between the three users.
+
+| Account | Email | Password |
+|---------|-------|----------|
+| Demo User | `demo@taskmanager.app` | `DemoAccess2026` |
+| Alex Carter | `alex@taskmanager.app` | `AlexDemo2026` |
+| Elham Khan | `elham@taskmanager.app` | `ElhamDemo2026` |
+
+Running it deletes and recreates only those three accounts and their tasks. Any other data in the database is left alone, so it is safe to run more than once.
 
 ## Authentication
 
