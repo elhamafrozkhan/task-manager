@@ -10,7 +10,7 @@
         </div>
 
         <div class="flex flex-wrap items-center justify-center gap-4">
-            <router-link to="/">
+            <router-link to="/" v-if="authStore.user">
                 Dashboard
             </router-link>
 
