@@ -35,6 +35,12 @@
                             class="w-10 h-10 rounded-full object-cover"
                             @error="authStore.hasAvatar = false"
                         />
+                    <div v-else
+                        class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold uppercase"  
+                    >
+                        {{userInitial}}
+
+                    </div>
                         <span class="text-sm font-medium">{{ authStore.user?.name }}</span>
                         <svg class="w-4 h-4 text-slate-400 transition-transform"
                             :class="{ 'rotate-180': isMenuOpen }"
@@ -53,6 +59,13 @@
                             class="w-16 h-16 mb-1 mx-auto rounded-full object-cover"
                             @error="authStore.hasAvatar = false"
                         />
+
+                    <div v-else
+                        class="w-16 h-16 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xl font-semibold uppercase mb-1 mx-auto "  
+                    >
+                        {{userInitial}}
+
+                    </div>
 
                         <p class="font-semibold text-lg">
 
@@ -105,6 +118,12 @@ export default{
 
     created() {
         this.authStore = useAuthStore()
+    },
+
+    computed: {
+        userInitial() {
+            return this.authStore?.user?.name?.charAt(0)
+        }
     },
 
     methods:{

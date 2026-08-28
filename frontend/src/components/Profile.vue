@@ -15,6 +15,13 @@
                     @error="authStore.hasAvatar = false"
                 />
 
+                <div v-else
+                        class="w-20 h-20 rounded-full bg-indigo-600 flex items-center justify-center text-white text-2xl border font-semibold uppercase"  
+                    >
+                        {{ userInitial }}
+
+                    </div>
+
                 <div class="flex-1">
                     <template v-if="!isEditingName">
                         <p class="text-lg font-semibold">{{ authStore.user?.name }}</p>
@@ -221,6 +228,12 @@ export default {
                 const notificationStore = useNotificationStore()
                 notificationStore.show('Failed to delete account', 'error')
             }
+        }
+    },
+
+    computed: {
+        userInitial() {
+            return this.authStore?.user?.name?.charAt(0)
         }
     },
 
